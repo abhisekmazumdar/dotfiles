@@ -35,9 +35,6 @@ mkdir $HOME/Code
 # Clone Github repositories
 ./clone.sh
 
-# Symlink the Mackup config file to the home directory
-ln -s ./.mackup.cfg $HOME/.mackup.cfg
-
 # Install latest node LTS
 mkdir ~/.nvm
 nvm install --lts
