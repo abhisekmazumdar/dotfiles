@@ -2,11 +2,25 @@
 
 This is my dotfiles for setting up my macOS.
 
+## What these dotfiles will do!
+
+* It will setup [Oh My Zsh](https://ohmyz.sh/) & [Homebrew](https://brew.sh/).
+* It will create symbolic link for the following:
+    - `.zshrc`
+    - `.gitconfig`
+    - `.gitignore_global`
+* Using [homebrew/bundle](https://github.com/Homebrew/homebrew-bundle),  it will install all the binaries/apps mentioned in the `./Brewfile`.
+* Create a project directory naming it `Code`.
+* Clone all the repos mentioned in `./clone.sh`.
+* Install the latest node LTS version via nvm.
+* Install and set up `phpcs` & `phpcbf` as par Drupal coding standards.
+* Set sensible macOS defaults with the file `./macos`.
+
 ## Setting up your Mac
 
-After generating a new SSH key and adding it to GitHub, follow these steps:
+After generating/copying the SSH key and adding it to GitHub, follow these steps:
 
-1. Clone this repo to ~/.dotfiles with:
+1. Clone the repo to `~/.dotfiles`:
     
     ```shell
     git clone --recursive git@github.com:abhisekmazumdar/dotfiles.git ~/.dotfiles

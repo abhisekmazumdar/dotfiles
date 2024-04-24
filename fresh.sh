@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Setting up your Horus MacBook..."
+echo "Setting up your Horus MacBook !!!"
 
 # Check for Oh My Zsh and install if we don't have it
 if test ! $(which omz); then
@@ -38,8 +38,8 @@ mkdir $HOME/Code
 ./clone.sh
 
 # Symlink the git configs to the home directory
-ln -s $HOME/.dotfiles/.gitconfig $HOME/.gitconfig
-ln -s $HOME/.dotfiles/.gitignore_global $HOME/.gitignore_global
+ln -sw $HOME/.dotfiles/.gitconfig $HOME/.gitconfig
+ln -sw $HOME/.dotfiles/.gitignore_global $HOME/.gitignore_global
 
 # Install latest node LTS
 mkdir ~/.nvm
