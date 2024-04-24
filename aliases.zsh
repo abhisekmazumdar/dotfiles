@@ -7,3 +7,7 @@ alias phpstorm='open -a /Applications/PhpStorm.app "`pwd`"'
 alias dotfiles="cd $DOTFILES"
 alias library="cd $HOME/Library"
 alias projects="cd $HOME/Code"
+
+# For Drupal
+alias phpcs=$HOME/.composer/vendor/bin/phpcs
+alias phpcbf=$HOME/.composer/vendor/bin/phpcbf

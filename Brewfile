@@ -6,6 +6,7 @@ tap 'homebrew/bundle'
 # Binaries
 brew 'bash' # Latest Bash version
 brew 'coreutils' # Those that come with macOS are outdated
+brew 'composer'
 brew 'ddev/ddev/ddev'
 brew 'gh'
 brew 'git'
