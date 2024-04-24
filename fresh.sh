@@ -35,6 +35,10 @@ mkdir $HOME/Code
 # Clone Github repositories
 ./clone.sh
 
+# Symlink the git configs to the home directory
+ln -s $HOME/.dotfiles/.gitconfig $HOME/.gitconfig
+ln -s $HOME/.dotfiles/.gitignore_global $HOME/.gitignore_global
+
 # Install latest node LTS
 mkdir ~/.nvm
 nvm install --lts

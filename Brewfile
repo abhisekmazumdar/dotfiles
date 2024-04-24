@@ -16,7 +16,6 @@ brew 'pkg-config' # https://github.com/driesvints/dotfiles/issues/20
 brew 'php'
 brew 'trash'
 brew 'nvm'
-brew 'mas' # Mac App Store manager
 
 # Apps
 cask 'arc'
