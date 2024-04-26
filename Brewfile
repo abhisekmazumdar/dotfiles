@@ -8,6 +8,8 @@ brew 'bash' # Latest Bash version
 brew 'coreutils' # Those that come with macOS are outdated
 brew 'composer'
 brew 'ddev/ddev/ddev'
+brew 'mkcert'
+brew 'nss'
 brew 'gh'
 brew 'git'
 brew 'grep'
@@ -17,6 +19,7 @@ brew 'pkg-config' # https://github.com/driesvints/dotfiles/issues/20
 brew 'php'
 brew 'trash'
 brew 'nvm'
+brew 'pantheon-systems/external/terminus'
 
 # Apps
 cask 'arc'
@@ -37,6 +40,7 @@ cask 'visual-studio-code'
 cask 'vlc'
 cask 'warp'
 cask 'zoom'
+cask 'sequel-ace'
 
 # Fonts
 cask 'font-source-code-pro-for-powerline'

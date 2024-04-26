@@ -31,6 +31,9 @@ brew bundle --file ./Brewfile
 # Clean up for Homebrew.
 brew cleanup
 
+# For ddev
+mkcert -install
+
 # Create a projects directories
 mkdir $HOME/Code
 
