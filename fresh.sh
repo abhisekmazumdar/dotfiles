@@ -53,5 +53,9 @@ composer global require drupal/coder
 $HOME/.composer/vendor/bin/phpcs --config-set installed_paths $HOME/.composer/vendor/drupal/coder/coder_sniffer/
 $HOME/.composer/vendor/bin/phpcs -i
 
+# Setup composer-diff
+composer global require ion-bazan/composer-diff
+composer diff --help
+
 # Set macOS preferences - we will run this last because this will reload the shell
 source ./.macos
