@@ -11,10 +11,10 @@ sudo -v
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 # Set computer name (as done via System Preferences → Sharing)
-sudo scutil --set ComputerName "Horus"
-sudo scutil --set HostName "Horus"
-sudo scutil --set LocalHostName "Horus"
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "Horus"
+sudo scutil --set ComputerName "horus"
+sudo scutil --set HostName "horus"
+sudo scutil --set LocalHostName "horus"
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "horus"
 
 # Finder: show path bar
 defaults write com.apple.finder ShowPathbar -bool true

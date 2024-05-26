@@ -7,6 +7,7 @@ tap 'homebrew/bundle'
 brew 'bash' # Latest Bash version
 brew 'coreutils' # Those that come with macOS are outdated
 brew 'composer'
+brew 'orbstack'
 brew 'ddev/ddev/ddev'
 brew 'mkcert'
 brew 'nss'
@@ -43,6 +44,8 @@ cask 'vlc'
 cask 'warp'
 cask 'zoom'
 cask 'sequel-ace'
+cask 'postman'
+cask 'whatsapp'
 
 # Fonts
 cask 'font-source-code-pro-for-powerline'
