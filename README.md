@@ -14,7 +14,7 @@ This is my dotfiles for setting up my macOS.
 * Clone all the repos mentioned in `./clone.sh`.
 * Install the latest node LTS version via nvm.
 * Install and set up `phpcs` & `phpcbf` as par Drupal coding standards.
-* Set sensible macOS defaults with the file `./macos/macos`.
+* Set sensible macOS defaults with the file `./macos/.macos`.
 
 ## Setting up your Mac
 
