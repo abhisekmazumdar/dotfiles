@@ -10,7 +10,7 @@ This is my dotfiles for setting up my macOS.
     - `.gitconfig`
     - `.gitignore_global`
 * Using [homebrew/bundle](https://github.com/Homebrew/homebrew-bundle),  it will install all the binaries/apps mentioned in the `./brew/Brewfile`.
-* Create a project directory naming it `Code`.
+* Create a project directory, naming it `Code`.
 * Clone all the repos mentioned in `./clone.sh`.
 * Install the latest node LTS version via nvm.
 * Install and set up `phpcs` & `phpcbf` as par Drupal coding standards.
