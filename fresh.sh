@@ -17,7 +17,7 @@ fi
 
 # Removes .zshrc from $HOME (if it exists) and symlinks the .zshrc file from the .dotfiles
 rm -rf $HOME/.zshrc
-ln -sw $HOME/.dotfiles/.zshrc $HOME/.zshrc
+ln -sw $HOME/.dotfiles/zsh/.zshrc $HOME/.zshrc
 
 source ~/.zshrc
 
@@ -26,7 +26,7 @@ brew update
 
 # Install all our dependencies with bundle (See Brewfile)
 brew tap homebrew/bundle
-brew bundle --file ./Brewfile
+brew bundle --file ./brew/Brewfile
 
 # Clean up for Homebrew.
 brew cleanup
@@ -37,12 +37,17 @@ mkcert -install
 # Create a projects directories
 mkdir $HOME/Code
 
-# Clone Github repositories
-./clone.sh
+# Ask if user wants to clone your GitHub repositories with default answer as 'y'
+echo "Do you want to clone your GitHub repositories? (y/n) [default: y]"
+read -r clone_answer
+clone_answer=${clone_answer:-y}
+if [ "$clone_answer" = "y" ]; then
+  ./clone.sh
+fi
 
 # Symlink the git configs to the home directory
-ln -sw $HOME/.dotfiles/.gitconfig $HOME/.gitconfig
-ln -sw $HOME/.dotfiles/.gitignore_global $HOME/.gitignore_global
+ln -sw $HOME/.dotfiles/git/.gitconfig $HOME/.gitconfig
+ln -sw $HOME/.dotfiles/git/.gitignore_global $HOME/.gitignore_global
 
 # Install latest node LTS
 mkdir ~/.nvm
@@ -58,4 +63,4 @@ composer global require ion-bazan/composer-diff
 composer diff --help
 
 # Set macOS preferences - we will run this last because this will reload the shell
-source ./.macos
+source ./macos/.macos
