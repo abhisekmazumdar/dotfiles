@@ -15,7 +15,10 @@ alias phpstorm='open -a /Applications/PhpStorm.app "`pwd`"'
 # Directories
 alias dotfiles="cd $DOTFILES"
 alias library="cd $HOME/Library"
-alias projects="cd $HOME/Code"
+alias open-codes="cd $HOME/Code"
+alias open-mautic="cd $HOME/Code/mautic-projects"
+alias open-drupal="cd $HOME/Code/drupal-projects"
+
 
 # For Drupal
 alias phpcs=$HOME/.composer/vendor/bin/phpcs
