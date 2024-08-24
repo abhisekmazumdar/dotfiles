@@ -7,7 +7,6 @@ tap 'homebrew/bundle'
 brew 'bash' # Latest Bash version
 brew 'coreutils' # Those that come with macOS are outdated
 brew 'composer'
-brew 'orbstack'
 brew 'ddev/ddev/ddev'
 brew 'mkcert'
 brew 'nss'
@@ -20,6 +19,7 @@ brew 'pkg-config' # https://github.com/driesvints/dotfiles/issues/20
 brew 'php'
 brew 'trash'
 brew 'nvm'
+brew 'fastfetch'
 brew 'pantheon-systems/external/terminus'
 
 # Apps
@@ -36,16 +36,16 @@ cask 'phpstorm'
 cask 'raycast'
 cask 'slack'
 cask 'sublime-text'
-cask 'surfshark'
 cask 'visual-studio-code'
 cask 'cursor'
-cask 'orion'
 cask 'vlc'
 cask 'warp'
 cask 'zoom'
 cask 'sequel-ace'
 cask 'postman'
 cask 'whatsapp'
+cask 'ente-auth'
+cask 'hiddenbar'
 
 # Fonts
 cask 'font-source-code-pro-for-powerline'
