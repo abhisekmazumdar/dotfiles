@@ -1,36 +1,63 @@
 # Introduction
 
-This is my dotfiles for setting up my macOS.
+This repository contains my personal dotfiles for setting up a new macOS machine. It includes configurations for development tools, system preferences, and a streamlined setup process.
 
-## What these dotfiles will do!
+## Features
 
-* It will setup [Oh My Zsh](https://ohmyz.sh/) & [Homebrew](https://brew.sh/).
-* It will create symbolic link for the following:
-    - `.zshrc`
-    - `.gitconfig`
-    - `.gitignore_global`
-* Using [homebrew/bundle](https://github.com/Homebrew/homebrew-bundle),  it will install all the binaries/apps mentioned in the `./brew/Brewfile`.
-* Create a project directory, naming it `Code`.
-* Clone all the repos mentioned in `./clone.sh`.
-* Install the latest node LTS version via nvm.
-* Install and set up `phpcs` & `phpcbf` as par Drupal coding standards.
-* Set sensible macOS defaults with the file `./macos/.macos`.
+* **Shell & Package Management**
+  - [Oh My Zsh](https://ohmyz.sh/) for enhanced shell experience
+  - [Homebrew](https://brew.sh/) for package management
+  - [Homebrew Bundle](https://github.com/Homebrew/homebrew-bundle) for managing all applications and binaries
 
-## Setting up your Mac
+* **Development Environment**
+  - Latest Node.js LTS version via nvm
+  - PHP development tools:
+    - `phpcs` & `phpcbf` configured for Drupal coding standards
+    - `composer-diff` for comparing Composer dependencies
+  - DDEV development environment setup with mkcert
+  - Git configuration with global settings
 
-After generating/copying the SSH key and adding it to GitHub, follow these steps:
+* **System Configuration**
+  - Custom macOS defaults for optimal development experience
+  - Project directory structure setup
+  - Automatic repository cloning for personal projects
 
-1. Clone the repo to `~/.dotfiles`:
-    
-    ```shell
-    git clone --recursive git@github.com:abhisekmazumdar/dotfiles.git ~/.dotfiles
-    ```
-2. Run the installation with:
+## Installation
 
-    ```shell
-    cd ~/.dotfiles && ./fresh.sh
-    ```
+1. **Prerequisites**
+   - Ensure you have SSH keys set up and added to GitHub
+   - Have a fresh macOS installation ready
 
-## Cleaning the old Mac (optionally)
+2. **Setup Process**
+   ```shell
+   # Clone the repository
+   git clone --recursive git@github.com:abhisekmazumdar/dotfiles.git ~/.dotfiles
+   
+   # Run the installation script
+   cd ~/.dotfiles && ./fresh.sh
+   ```
 
-After you've set up your new Mac you may want to wipe and clean install your old Mac. [Follow this](https://support.apple.com/guide/mac-help/erase-and-reinstall-macos-mh27903/mac) article to do that. Remember to backup your data first!
+The installation script will:
+- Install and configure Oh My Zsh
+- Set up Homebrew and install all specified packages
+- Create symbolic links for configuration files
+- Set up development tools and environments
+- Configure system preferences
+- Optionally clone your GitHub repositories
+
+## Directory Structure
+
+- `brew/` - Homebrew bundle configuration
+- `git/` - Git configuration files
+- `macos/` - macOS system preferences
+- `zsh/` - Zsh configuration files
+- `fresh.sh` - Main installation script
+- `clone.sh` - Repository cloning script
+
+## Optional: Cleaning Your Old Mac
+
+After setting up your new Mac, you may want to clean install your old machine. Follow Apple's official guide for [erasing and reinstalling macOS](https://support.apple.com/guide/mac-help/erase-and-reinstall-macos-mh27903/mac). Remember to backup your data first!
+
+## License
+
+This project is open source and available under the MIT License.
