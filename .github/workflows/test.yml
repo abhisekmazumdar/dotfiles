@@ -1,0 +1,86 @@
+name: Test Dotfiles Setup
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-setup:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup macOS
+        run: |
+          # Install Xcode Command Line Tools
+          xcode-select --install || true
+          
+          # Install Homebrew
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.zprofile
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+
+      - name: Run fresh.sh
+        run: |
+          chmod +x ./fresh.sh
+          ./fresh.sh
+
+      - name: Verify installations
+        run: |
+          # Check if essential tools are installed
+          which zsh
+          which brew
+          which git
+          which node
+          which nvm
+          which php
+          which composer
+          
+          # Verify symlinks
+          [ -L "$HOME/.zshrc" ] && echo ".zshrc symlink exists"
+          [ -L "$HOME/.gitconfig" ] && echo ".gitconfig symlink exists"
+          [ -L "$HOME/.gitignore_global" ] && echo ".gitignore_global symlink exists"
+          
+          # Verify directories
+          [ -d "$HOME/Code" ] && echo "Code directory exists"
+          [ -d "$HOME/.nvm" ] && echo ".nvm directory exists"
+          
+          # Verify Homebrew packages
+          brew list
+          
+          # Verify PHP tools
+          phpcs --version
+          phpcbf --version
+          
+          # Verify Node.js
+          node --version
+          npm --version
+
+      - name: Test shell configuration
+        run: |
+          # Test if shell configuration works
+          zsh -c 'echo "Testing shell configuration"'
+          zsh -c 'which nvm'
+          zsh -c 'nvm --version'
+          
+          # Test if git configuration is loaded
+          git config --list
+
+      - name: Cleanup
+        if: always()
+        run: |
+          # Remove symlinks
+          rm -f ~/.zshrc ~/.gitconfig ~/.gitignore_global
+          
+          # Remove created directories
+          rm -rf ~/Code ~/.nvm
+          
+          # Uninstall Homebrew packages
+          brew uninstall --force $(brew list)
+          
+          # Remove Homebrew
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
