@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          path: ~/.dotfiles
 
       - name: Setup macOS
         run: |
@@ -24,8 +26,19 @@ jobs:
           echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.zprofile
           eval "$(/opt/homebrew/bin/brew shellenv)"
 
+      - name: Verify repository structure
+        run: |
+          echo "Checking repository structure..."
+          ls -la ~/.dotfiles
+          [ -d ~/.dotfiles/zsh ] && echo "zsh directory exists"
+          [ -d ~/.dotfiles/git ] && echo "git directory exists"
+          [ -f ~/.dotfiles/zsh/.zshrc ] && echo ".zshrc exists"
+          [ -f ~/.dotfiles/git/.gitconfig ] && echo ".gitconfig exists"
+          [ -f ~/.dotfiles/git/.gitignore_global ] && echo ".gitignore_global exists"
+
       - name: Run fresh.sh
         run: |
+          cd ~/.dotfiles
           chmod +x ./fresh.sh
           ./fresh.sh
 
