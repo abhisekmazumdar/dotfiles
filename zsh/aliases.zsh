@@ -4,13 +4,15 @@
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-alias zshconfig="code ~/.zshrc"
-alias ohmyzsh="code ~/.oh-my-zsh"
+alias zshconfig="cursor ~/.zshrc"
+alias ohmyzsh="cursor ~/.oh-my-zsh"
 
 # Shortcuts
 alias copyssh="pbcopy < $HOME/.ssh/id_rsa.pub"
 alias reloaddns="dscacheutil -flushcache && sudo killall -HUP mDNSResponder"
 alias phpstorm='open -a /Applications/PhpStorm.app "`pwd`"'
+# ente is been used by Raycast so do not remove it.
+alias ente='~/ente'
 
 # Directories
 alias dotfiles="cd $DOTFILES"
