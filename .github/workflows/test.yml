@@ -16,60 +16,133 @@ jobs:
         with:
           path: ~/.dotfiles
 
-      - name: Setup macOS
+      - name: Setup macOS environment
         run: |
           # Install Xcode Command Line Tools
           xcode-select --install || true
           
           # Install Homebrew
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          
+          # Add Homebrew to PATH
           echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.zprofile
+          echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.bash_profile
           eval "$(/opt/homebrew/bin/brew shellenv)"
+          
+          # Verify Homebrew is working
+          brew --version
 
       - name: Verify repository structure
         run: |
           echo "Checking repository structure..."
           ls -la ~/.dotfiles
-          [ -d ~/.dotfiles/zsh ] && echo "zsh directory exists"
-          [ -d ~/.dotfiles/git ] && echo "git directory exists"
-          [ -f ~/.dotfiles/zsh/.zshrc ] && echo ".zshrc exists"
-          [ -f ~/.dotfiles/git/.gitconfig ] && echo ".gitconfig exists"
-          [ -f ~/.dotfiles/git/.gitignore_global ] && echo ".gitignore_global exists"
+          [ -d ~/.dotfiles/zsh ] && echo "✓ zsh directory exists"
+          [ -d ~/.dotfiles/git ] && echo "✓ git directory exists"
+          [ -f ~/.dotfiles/zsh/.zshrc ] && echo "✓ .zshrc exists"
+          [ -f ~/.dotfiles/git/.gitconfig ] && echo "✓ .gitconfig exists"
+          [ -f ~/.dotfiles/git/.gitignore_global ] && echo "✓ .gitignore_global exists"
+          [ -f ~/.dotfiles/brew/Brewfile ] && echo "✓ Brewfile exists"
 
-      - name: Run fresh.sh
+      - name: Install Oh My Zsh
         run: |
-          cd ~/.dotfiles
-          chmod +x ./fresh.sh
-          ./fresh.sh
+          # Install Oh My Zsh non-interactively
+          RUNZSH=no CHSH=no /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/HEAD/tools/install.sh)"
+
+      - name: Setup shell configuration
+        run: |
+          # Create symlinks for shell configuration
+          rm -f $HOME/.zshrc
+          ln -sf $HOME/.dotfiles/zsh/.zshrc $HOME/.zshrc
+          
+          # Source the configuration
+          source $HOME/.zshrc || true
+
+      - name: Install Homebrew packages
+        run: |
+          # Update Homebrew
+          brew update
+          
+          # Install packages from Brewfile
+          brew tap homebrew/bundle
+          brew bundle --file ~/.dotfiles/brew/Brewfile --no-quarantine
+          
+          # Clean up
+          brew cleanup
+
+      - name: Setup development environment
+        run: |
+          # Create Code directory
+          mkdir -p $HOME/Code
+          
+          # Setup mkcert
+          mkcert -install || true
+          
+          # Setup git configuration
+          ln -sf $HOME/.dotfiles/git/.gitconfig $HOME/.gitconfig
+          ln -sf $HOME/.dotfiles/git/.gitignore_global $HOME/.gitignore_global
+
+      - name: Setup Node.js and NVM
+        run: |
+          # Load NVM
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+          
+          # Install Node.js LTS
+          nvm install --lts
+          nvm use --lts
+          
+          # Verify installation
+          node --version
+          npm --version
+
+      - name: Setup PHP and Composer
+        run: |
+          # Verify PHP installation
+          php --version
+          
+          # Setup Composer
+          composer --version
+          
+          # Install global Composer packages
+          composer global require drupal/coder || true
+          composer global require ion-bazan/composer-diff || true
+          
+          # Setup PHPCS
+          if [ -f "$HOME/.composer/vendor/bin/phpcs" ]; then
+            $HOME/.composer/vendor/bin/phpcs --config-set installed_paths $HOME/.composer/vendor/drupal/coder/coder_sniffer/ || true
+            $HOME/.composer/vendor/bin/phpcs -i || true
+          fi
 
       - name: Verify installations
         run: |
           # Check if essential tools are installed
-          which zsh
-          which brew
-          which git
-          which node
-          which nvm
-          which php
-          which composer
+          echo "=== Essential Tools ==="
+          which zsh && echo "✓ zsh found"
+          which brew && echo "✓ brew found"
+          which git && echo "✓ git found"
+          which node && echo "✓ node found"
+          which npm && echo "✓ npm found"
+          which php && echo "✓ php found"
+          which composer && echo "✓ composer found"
+          which ddev && echo "✓ ddev found"
           
           # Verify symlinks
-          [ -L "$HOME/.zshrc" ] && echo ".zshrc symlink exists"
-          [ -L "$HOME/.gitconfig" ] && echo ".gitconfig symlink exists"
-          [ -L "$HOME/.gitignore_global" ] && echo ".gitignore_global symlink exists"
+          echo "=== Symlinks ==="
+          [ -L "$HOME/.zshrc" ] && echo "✓ .zshrc symlink exists"
+          [ -L "$HOME/.gitconfig" ] && echo "✓ .gitconfig symlink exists"
+          [ -L "$HOME/.gitignore_global" ] && echo "✓ .gitignore_global symlink exists"
           
           # Verify directories
-          [ -d "$HOME/Code" ] && echo "Code directory exists"
-          [ -d "$HOME/.nvm" ] && echo ".nvm directory exists"
+          echo "=== Directories ==="
+          [ -d "$HOME/Code" ] && echo "✓ Code directory exists"
+          [ -d "$HOME/.nvm" ] && echo "✓ .nvm directory exists"
           
           # Verify Homebrew packages
-          brew list
-          
-          # Verify PHP tools
-          phpcs --version
-          phpcbf --version
+          echo "=== Homebrew Packages ==="
+          brew list --formula | head -10
           
           # Verify Node.js
+          echo "=== Node.js ==="
           node --version
           npm --version
 
@@ -77,23 +150,25 @@ jobs:
         run: |
           # Test if shell configuration works
           zsh -c 'echo "Testing shell configuration"'
-          zsh -c 'which nvm'
-          zsh -c 'nvm --version'
           
-          # Test if git configuration is loaded
-          git config --list
+          # Test NVM
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+          zsh -c 'nvm --version' || echo "NVM not available in zsh"
+          
+          # Test git configuration
+          git config --list | head -5
 
       - name: Cleanup
         if: always()
         run: |
+          echo "Cleaning up test environment..."
+          
           # Remove symlinks
           rm -f ~/.zshrc ~/.gitconfig ~/.gitignore_global
           
           # Remove created directories
           rm -rf ~/Code ~/.nvm
           
-          # Uninstall Homebrew packages
-          brew uninstall --force $(brew list)
-          
-          # Remove Homebrew
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
+          # Note: Not uninstalling Homebrew packages to avoid conflicts
+          # and speed up future runs

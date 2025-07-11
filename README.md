@@ -54,6 +54,41 @@ The installation script will:
 - `fresh.sh` - Main installation script
 - `clone.sh` - Repository cloning script
 
+## GitHub Actions
+
+This repository includes GitHub Actions workflows to automatically test the dotfiles setup in a CI environment:
+
+### Available Workflows
+
+1. **`test.yml`** - Comprehensive testing workflow that:
+   - Sets up the complete development environment
+   - Installs all Homebrew packages
+   - Configures Node.js, PHP, and development tools
+   - Verifies all installations and configurations
+   - Tests shell configuration
+
+2. **`test-simple.yml`** - Simplified workflow that:
+   - Uses the `ci-setup.sh` script for streamlined setup
+   - Performs essential verification
+   - Faster execution for quick checks
+
+### CI Setup Script
+
+The `ci-setup.sh` script is a non-interactive version of `fresh.sh` designed for CI environments:
+- Removes interactive prompts
+- Handles error conditions gracefully
+- Skips user-specific configurations
+- Optimized for automated testing
+
+### Running Tests
+
+The workflows automatically run on:
+- Push to `main` branch
+- Pull requests to `main` branch
+- Manual trigger via workflow_dispatch
+
+You can view test results in the [Actions tab](https://github.com/abhisekmazumdar/dotfiles/actions) of this repository.
+
 ## Optional: Cleaning Your Old Mac
 
 After setting up your new Mac, you may want to clean install your old machine. Follow Apple's official guide for [erasing and reinstalling macOS](https://support.apple.com/guide/mac-help/erase-and-reinstall-macos-mh27903/mac). Remember to backup your data first!

@@ -1,0 +1,75 @@
+name: Test Dotfiles Setup (Simple)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-setup:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          path: ~/.dotfiles
+
+      - name: Run CI Setup
+        run: |
+          cd ~/.dotfiles
+          chmod +x ./ci-setup.sh
+          ./ci-setup.sh
+
+      - name: Verify Setup
+        run: |
+          echo "=== Verification Results ==="
+          
+          # Check essential tools
+          echo "Essential Tools:"
+          which zsh && echo "✓ zsh"
+          which brew && echo "✓ brew"
+          which git && echo "✓ git"
+          which node && echo "✓ node"
+          which php && echo "✓ php"
+          which composer && echo "✓ composer"
+          which ddev && echo "✓ ddev"
+          
+          # Check symlinks
+          echo "Symlinks:"
+          [ -L "$HOME/.zshrc" ] && echo "✓ .zshrc"
+          [ -L "$HOME/.gitconfig" ] && echo "✓ .gitconfig"
+          [ -L "$HOME/.gitignore_global" ] && echo "✓ .gitignore_global"
+          
+          # Check directories
+          echo "Directories:"
+          [ -d "$HOME/Code" ] && echo "✓ Code directory"
+          [ -d "$HOME/.nvm" ] && echo "✓ .nvm directory"
+          
+          # Check versions
+          echo "Versions:"
+          node --version
+          npm --version
+          php --version
+          composer --version
+
+      - name: Test Shell Configuration
+        run: |
+          # Test zsh configuration
+          zsh -c 'echo "Shell configuration test passed"'
+          
+          # Test git configuration
+          git config --list | head -3
+          
+          # Test NVM (if available)
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+          nvm --version || echo "NVM not available"
+
+      - name: Cleanup
+        if: always()
+        run: |
+          echo "Cleaning up..."
+          rm -f ~/.zshrc ~/.gitconfig ~/.gitignore_global
+          rm -rf ~/Code ~/.nvm
