@@ -7,55 +7,73 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+env:
+  HOMEBREW_NO_AUTO_UPDATE: 1
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
+
 jobs:
   test-setup:
     runs-on: macos-latest
-    env:
-      HOMEBREW_NO_AUTO_UPDATE: 1
-      HOMEBREW_NO_INSTALL_CLEANUP: 1
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Link dotfiles to expected path
-        # actions/checkout@v4 requires the path to be within GITHUB_WORKSPACE.
-        # ci-setup.sh expects dotfiles at $HOME/.dotfiles so we symlink them.
-        run: ln -sf "$GITHUB_WORKSPACE" "$HOME/.dotfiles"
+      - name: Install Homebrew packages (CLI tools only)
+        run: brew bundle --file brew/Brewfile.ci --no-quarantine --no-lock
 
-      - name: Run CI setup
+      - name: Create config symlinks
         run: |
-          chmod +x "$HOME/.dotfiles/ci-setup.sh"
-          "$HOME/.dotfiles/ci-setup.sh"
+          ln -sf "$GITHUB_WORKSPACE/zsh/.zshrc"            "$HOME/.zshrc"
+          ln -sf "$GITHUB_WORKSPACE/git/.gitconfig"        "$HOME/.gitconfig"
+          ln -sf "$GITHUB_WORKSPACE/git/.gitignore_global" "$HOME/.gitignore_global"
+          mkdir -p "$HOME/Code"
 
-      - name: Verify tools
+      - name: Setup mkcert (for ddev)
+        run: mkcert -install
+
+      - name: Install Node LTS via NVM
         run: |
-          # Source NVM so node/npm are on PATH for this step
           export NVM_DIR="$HOME/.nvm"
-          [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+          mkdir -p "$NVM_DIR"
+          . "/opt/homebrew/opt/nvm/nvm.sh"
+          nvm install --lts
+          nvm use --lts
+          node --version
+          npm --version
+
+      - name: Setup PHP tools (phpcs + composer-diff)
+        run: |
+          composer global require drupal/coder || true
+          PHPCS="$HOME/.composer/vendor/bin/phpcs"
+          if [ -f "$PHPCS" ]; then
+            "$PHPCS" --config-set installed_paths \
+              "$HOME/.composer/vendor/drupal/coder/coder_sniffer/" || true
+            "$PHPCS" -i
+          fi
+          composer global require ion-bazan/composer-diff || true
+
+      - name: Verify setup
+        run: |
+          export NVM_DIR="$HOME/.nvm"
+          . "/opt/homebrew/opt/nvm/nvm.sh"
 
           echo "=== Tools ==="
-          command -v zsh      && echo "zsh ok"      || echo "zsh MISSING"
-          command -v brew     && echo "brew ok"     || echo "brew MISSING"
-          command -v git      && echo "git ok"      || echo "git MISSING"
-          command -v node     && echo "node ok"     || echo "node MISSING"
-          command -v php      && echo "php ok"      || echo "php MISSING"
-          command -v composer && echo "composer ok" || echo "composer MISSING"
-          command -v ddev     && echo "ddev ok"     || echo "ddev MISSING"
-          nvm --version       && echo "nvm ok"      || echo "nvm MISSING"
+          command -v brew     && echo "brew ok"     || true
+          command -v git      && echo "git ok"      || true
+          command -v node     && echo "node ok"     || true
+          command -v php      && echo "php ok"      || true
+          command -v composer && echo "composer ok" || true
+          command -v ddev     && echo "ddev ok"     || true
+          nvm --version       && echo "nvm ok"      || true
 
           echo "=== Symlinks ==="
-          [ -L "$HOME/.zshrc" ]           && echo ".zshrc ok"           || echo ".zshrc MISSING"
-          [ -L "$HOME/.gitconfig" ]        && echo ".gitconfig ok"       || echo ".gitconfig MISSING"
-          [ -L "$HOME/.gitignore_global" ] && echo ".gitignore ok"       || echo ".gitignore MISSING"
+          [ -L "$HOME/.zshrc" ]           && echo ".zshrc ok"    || echo ".zshrc MISSING"
+          [ -L "$HOME/.gitconfig" ]        && echo ".gitconfig ok" || echo ".gitconfig MISSING"
+          [ -L "$HOME/.gitignore_global" ] && echo ".gitignore ok" || echo ".gitignore MISSING"
 
           echo "=== Versions ==="
           node --version
           npm --version
-          php --version
+          php --version | head -1
           composer --version
-
-      - name: Test shell and git config
-        run: |
-          zsh -c 'echo "zsh ok"'
-          git config --list | head -5

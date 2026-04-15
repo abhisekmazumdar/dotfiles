@@ -1,5 +1,7 @@
 # CI-only Brewfile — installs CLI tools only, no GUI casks.
-# Used by ci-setup.sh in GitHub Actions.
+# Used by .github/workflows/test.yml in GitHub Actions.
+
+tap 'ddev/ddev'
 
 brew 'bash'
 brew 'composer'
