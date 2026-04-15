@@ -7,10 +7,6 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
-env:
-  HOMEBREW_NO_AUTO_UPDATE: 1
-  HOMEBREW_NO_INSTALL_CLEANUP: 1
-
 jobs:
   test-setup:
     runs-on: macos-latest
@@ -19,17 +15,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Debug environment
+      - name: Diagnose environment
         run: |
-          echo "PWD=$PWD"
-          echo "HOME=$HOME"
-          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
-          brew --version
-          echo "--- Brewfile.ci ---"
-          cat brew/Brewfile.ci
+          set +e
+          uname -a
+          sw_vers
+          echo "PATH=$PATH"
+          which brew    && brew --version    || echo "WARN: brew not found"
+          ls brew/                           || echo "WARN: brew/ dir not found"
+          cat brew/Brewfile.ci               || echo "WARN: Brewfile.ci not found"
+          echo "--- diagnose done ---"
 
-      - name: Install Homebrew packages (CLI tools only)
-        run: brew bundle --file brew/Brewfile.ci --no-quarantine --no-upgrade
+      - name: Install Homebrew packages
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+          HOMEBREW_NO_INSTALL_CLEANUP: "1"
+        run: brew bundle --file brew/Brewfile.ci --no-upgrade
 
       - name: Create config symlinks
         run: |
@@ -51,7 +52,7 @@ jobs:
           node --version
           npm --version
 
-      - name: Setup PHP tools (phpcs + composer-diff)
+      - name: Setup PHP tools
         run: |
           composer global require drupal/coder || true
           PHPCS="$HOME/.composer/vendor/bin/phpcs"
@@ -77,7 +78,7 @@ jobs:
           nvm --version       && echo "nvm ok"      || true
 
           echo "=== Symlinks ==="
-          [ -L "$HOME/.zshrc" ]           && echo ".zshrc ok"    || echo ".zshrc MISSING"
+          [ -L "$HOME/.zshrc" ]           && echo ".zshrc ok"     || echo ".zshrc MISSING"
           [ -L "$HOME/.gitconfig" ]        && echo ".gitconfig ok" || echo ".gitconfig MISSING"
           [ -L "$HOME/.gitignore_global" ] && echo ".gitignore ok" || echo ".gitignore MISSING"
 

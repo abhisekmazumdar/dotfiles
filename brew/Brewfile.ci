@@ -1,12 +1,9 @@
-# CI-only Brewfile — installs CLI tools only, no GUI casks.
+# CI-only Brewfile — installs CLI tools only, no GUI casks, no custom taps.
 # Used by .github/workflows/test.yml in GitHub Actions.
-
-tap "ddev/ddev"
 
 brew "bash"
 brew "composer"
 brew "coreutils"
-brew "ddev/ddev/ddev"
 brew "gh"
 brew "git"
 brew "go"
