@@ -10,24 +10,31 @@ on:
 jobs:
   test-setup:
     runs-on: macos-latest
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      HOMEBREW_NO_INSTALL_CLEANUP: 1
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Link dotfiles to expected path
-        # actions/checkout@v4 requires path to be within GITHUB_WORKSPACE.
-        # ci-setup.sh expects dotfiles at $HOME/.dotfiles, so symlink them.
+        # actions/checkout@v4 requires the path to be within GITHUB_WORKSPACE.
+        # ci-setup.sh expects dotfiles at $HOME/.dotfiles so we symlink them.
         run: ln -sf "$GITHUB_WORKSPACE" "$HOME/.dotfiles"
 
       - name: Run CI setup
         run: |
-          cd "$HOME/.dotfiles"
-          chmod +x ./ci-setup.sh
-          ./ci-setup.sh
+          chmod +x "$HOME/.dotfiles/ci-setup.sh"
+          "$HOME/.dotfiles/ci-setup.sh"
 
-      - name: Verify installations
+      - name: Verify tools
         run: |
-          echo "=== Essential Tools ==="
+          # Source NVM so node/npm are on PATH for this step
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+
+          echo "=== Tools ==="
           command -v zsh      && echo "zsh ok"      || echo "zsh MISSING"
           command -v brew     && echo "brew ok"     || echo "brew MISSING"
           command -v git      && echo "git ok"      || echo "git MISSING"
@@ -35,20 +42,12 @@ jobs:
           command -v php      && echo "php ok"      || echo "php MISSING"
           command -v composer && echo "composer ok" || echo "composer MISSING"
           command -v ddev     && echo "ddev ok"     || echo "ddev MISSING"
-
-          echo "=== NVM ==="
-          export NVM_DIR="$HOME/.nvm"
-          [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-          nvm --version && echo "nvm ok" || echo "nvm MISSING"
+          nvm --version       && echo "nvm ok"      || echo "nvm MISSING"
 
           echo "=== Symlinks ==="
           [ -L "$HOME/.zshrc" ]           && echo ".zshrc ok"           || echo ".zshrc MISSING"
-          [ -L "$HOME/.gitconfig" ]        && echo ".gitconfig ok"        || echo ".gitconfig MISSING"
-          [ -L "$HOME/.gitignore_global" ] && echo ".gitignore_global ok" || echo ".gitignore_global MISSING"
-
-          echo "=== Directories ==="
-          [ -d "$HOME/Code" ] && echo "~/Code ok" || echo "~/Code MISSING"
-          [ -d "$HOME/.nvm" ] && echo "~/.nvm ok"  || echo "~/.nvm MISSING"
+          [ -L "$HOME/.gitconfig" ]        && echo ".gitconfig ok"       || echo ".gitconfig MISSING"
+          [ -L "$HOME/.gitignore_global" ] && echo ".gitignore ok"       || echo ".gitignore MISSING"
 
           echo "=== Versions ==="
           node --version
@@ -56,7 +55,7 @@ jobs:
           php --version
           composer --version
 
-      - name: Test shell configuration
+      - name: Test shell and git config
         run: |
-          zsh -c 'echo "Shell configuration test passed"'
+          zsh -c 'echo "zsh ok"'
           git config --list | head -5

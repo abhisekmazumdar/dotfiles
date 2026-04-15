@@ -1,71 +1,64 @@
-#!/bin/sh
+#!/bin/bash
+# CI-specific setup script — non-interactive, no GUI, no macOS preferences.
+set -euo pipefail
 
-echo "Setting up dotfiles for CI environment..."
+DOTFILES_DIR="$HOME/.dotfiles"
 
-# Xcode CLT is pre-installed on GitHub macOS runners; skip interactive install
-if ! xcode-select -p &>/dev/null; then
-  echo "Warning: Xcode Command Line Tools not found."
+echo "==> Checking Xcode Command Line Tools..."
+xcode-select -p &>/dev/null && echo "Already installed." || echo "Warning: not found."
+
+# Ensure Homebrew is in PATH (Apple Silicon: /opt/homebrew, Intel: /usr/local)
+echo "==> Initialising Homebrew..."
+if [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /usr/local/bin/brew ]; then
+  eval "$(/usr/local/bin/brew shellenv)"
 else
-  echo "Xcode Command Line Tools already installed."
-fi
-
-# Check for Oh My Zsh and install if we don't have it
-if test ! $(which omz); then
-  RUNZSH=no CHSH=no /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/HEAD/tools/install.sh)"
-fi
-
-# Check for Homebrew and install if we don't have it
-if test ! $(which brew); then
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.zprofile
+  echo "Homebrew not found — installing..."
+  NONINTERACTIVE=1 /bin/bash -c \
+    "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
+brew --version
 
-# Symlink .zshrc (remove existing before linking)
-rm -f $HOME/.zshrc
-ln -sf $HOME/.dotfiles/zsh/.zshrc $HOME/.zshrc
+# Install CLI tools (Brewfile.ci — no GUI casks)
+echo "==> Installing Homebrew packages..."
+HOMEBREW_NO_AUTO_UPDATE=1 \
+  brew bundle --file "$DOTFILES_DIR/brew/Brewfile.ci" --no-quarantine --no-lock
 
-# Update Homebrew recipes
-brew update
+# Symlink configs
+echo "==> Creating symlinks..."
+ln -sf "$DOTFILES_DIR/zsh/.zshrc"            "$HOME/.zshrc"
+ln -sf "$DOTFILES_DIR/git/.gitconfig"        "$HOME/.gitconfig"
+ln -sf "$DOTFILES_DIR/git/.gitignore_global" "$HOME/.gitignore_global"
 
-# Install CLI tools only (GUI casks are not needed in CI)
-brew bundle --file ./brew/Brewfile.ci --no-quarantine
-
-# Clean up Homebrew
-brew cleanup
-
-# For ddev
+# mkcert (used by ddev; non-fatal in CI)
+echo "==> Setting up mkcert..."
 mkcert -install || true
 
-# Create projects directory
-mkdir -p $HOME/Code
+# Project directory
+mkdir -p "$HOME/Code"
 
-# Skip GitHub repository cloning in CI
-echo "Skipping GitHub repository cloning in CI environment"
-
-# Symlink the git configs to the home directory
-ln -sf $HOME/.dotfiles/git/.gitconfig $HOME/.gitconfig
-ln -sf $HOME/.dotfiles/git/.gitignore_global $HOME/.gitignore_global
-
-# Install latest node LTS via NVM
-mkdir -p $HOME/.nvm
+# NVM + Node LTS
+echo "==> Installing Node LTS via NVM..."
 export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+mkdir -p "$NVM_DIR"
+NVM_SH="/opt/homebrew/opt/nvm/nvm.sh"
+[ -s "$NVM_SH" ] && \. "$NVM_SH"
 nvm install --lts
 nvm use --lts
+node --version
+npm --version
 
-# Setup phpcs & phpcbf
+# PHP tools
+echo "==> Installing global Composer packages..."
 composer global require drupal/coder || true
-if [ -f "$HOME/.composer/vendor/bin/phpcs" ]; then
-  $HOME/.composer/vendor/bin/phpcs --config-set installed_paths $HOME/.composer/vendor/drupal/coder/coder_sniffer/ || true
-  $HOME/.composer/vendor/bin/phpcs -i || true
+PHPCS="$HOME/.composer/vendor/bin/phpcs"
+if [ -f "$PHPCS" ]; then
+  "$PHPCS" --config-set installed_paths \
+    "$HOME/.composer/vendor/drupal/coder/coder_sniffer/" || true
+  "$PHPCS" -i || true
 fi
-
-# Setup composer-diff
 composer global require ion-bazan/composer-diff || true
-composer diff --help || true
 
-# Skip macOS preferences in CI
-echo "Skipping macOS preferences in CI environment"
-
-echo "CI setup completed successfully!"
+echo "==> CI setup complete!"
