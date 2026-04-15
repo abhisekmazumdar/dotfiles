@@ -1,19 +1,19 @@
 # CI-only Brewfile — installs CLI tools only, no GUI casks.
 # Used by .github/workflows/test.yml in GitHub Actions.
 
-tap 'ddev/ddev'
+tap "ddev/ddev"
 
-brew 'bash'
-brew 'composer'
-brew 'coreutils'
-brew 'ddev/ddev/ddev'
-brew 'gh'
-brew 'git'
-brew 'go'
-brew 'grep'
-brew 'mkcert'
-brew 'nss'
-brew 'nvm'
-brew 'php'
-brew 'pkg-config'
-brew 'trash'
+brew "bash"
+brew "composer"
+brew "coreutils"
+brew "ddev/ddev/ddev"
+brew "gh"
+brew "git"
+brew "go"
+brew "grep"
+brew "mkcert"
+brew "nss"
+brew "nvm"
+brew "php"
+brew "pkg-config"
+brew "trash"

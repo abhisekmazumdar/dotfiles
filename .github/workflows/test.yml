@@ -19,8 +19,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug environment
+        run: |
+          echo "PWD=$PWD"
+          echo "HOME=$HOME"
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          brew --version
+          echo "--- Brewfile.ci ---"
+          cat brew/Brewfile.ci
+
       - name: Install Homebrew packages (CLI tools only)
-        run: brew bundle --file brew/Brewfile.ci --no-quarantine --no-lock
+        run: brew bundle --file brew/Brewfile.ci --no-quarantine --no-upgrade
 
       - name: Create config symlinks
         run: |
