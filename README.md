@@ -1,5 +1,7 @@
 # Introduction
 
+[![CI](https://github.com/abhisekmazumdar/dotfiles/actions/workflows/test.yml/badge.svg)](https://github.com/abhisekmazumdar/dotfiles/actions/workflows/test.yml)
+
 This repository contains my personal dotfiles for setting up a new macOS machine. It includes configurations for development tools, system preferences, and a streamlined setup process.
 
 ## Features
@@ -63,6 +65,27 @@ The installation script will:
 - `zsh/` - Zsh configuration files (`.zshrc`, `aliases.zsh`, `path.zsh`)
 - `fresh.sh` - Main installation script
 - `clone.sh` - Repository cloning script
+
+## CI & Verification
+
+The CI pipeline runs on every push and pull request against a fresh **macOS (Apple Silicon)** GitHub Actions runner. It calls `fresh.sh` directly — the same script you'd run on a new Mac — with two CI-specific adjustments:
+
+| What CI skips | Why |
+|---|---|
+| GUI cask apps (Arc, PhpStorm, Slack…) | No display server on headless runners |
+| macOS system preferences (`.macos`) | No need to set hostname/Dock/Finder on a runner |
+| Interactive clone prompt | No user to answer `y/n` |
+| `source ~/.zshrc` | Runner uses bash; sourcing a zsh config would fail |
+
+Everything else runs identically to a real Mac: Homebrew, Oh My Zsh, symlinks, nvm + Node LTS, phpcs, phpcbf, composer-diff.
+
+### Last tested locally
+
+| Date | macOS | Chip | Result |
+|------|-------|------|--------|
+| — | — | — | Update after each full local run |
+
+> After running `./fresh.sh` on your Mac, update the table above and open a PR.
 
 ## Optional: Cleaning Your Old Mac
 

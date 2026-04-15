@@ -1,18 +1,30 @@
 #!/bin/sh
 
-echo "Setting up your Horus MacBook !!!"
+echo "Setting up your Mac..."
+
+# GitHub Actions (and most CI systems) set CI=true automatically.
+# We use this to skip interactive prompts, GUI steps, and macOS preferences.
+IS_CI="${CI:-false}"
 
 # Check if Xcode Command Line Tools are installed
-if ! xcode-select -p &>/dev/null; then
-  echo "Xcode Command Line Tools not found. Installing..."
-  xcode-select --install
+if ! xcode-select -p >/dev/null 2>&1; then
+  if [ "$IS_CI" = "true" ]; then
+    echo "Xcode CLT not found — skipping interactive install in CI."
+  else
+    echo "Xcode Command Line Tools not found. Installing..."
+    xcode-select --install
+  fi
 else
   echo "Xcode Command Line Tools already installed."
 fi
 
 # Check for Oh My Zsh and install if we don't have it
 if test ! $(which omz); then
-  /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/HEAD/tools/install.sh)"
+  if [ "$IS_CI" = "true" ]; then
+    RUNZSH=no CHSH=no /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/HEAD/tools/install.sh)"
+  else
+    /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/HEAD/tools/install.sh)"
+  fi
 fi
 
 # Check for Homebrew and install if we don't have it
@@ -27,10 +39,16 @@ fi
 rm -f $HOME/.zshrc
 ln -sf $HOME/.dotfiles/zsh/.zshrc $HOME/.zshrc
 
+# Source the shell config (skip in CI — bash runner cannot source a zsh config)
+if [ "$IS_CI" != "true" ]; then
+  source ~/.zshrc
+fi
+
 # Update Homebrew recipes
 brew update
 
 # Install all our dependencies with bundle (See Brewfile)
+# In CI, the workflow sets HOMEBREW_BUNDLE_CASK_SKIP so GUI casks are skipped.
 brew bundle --file ./brew/Brewfile
 
 # Clean up for Homebrew.
@@ -39,23 +57,25 @@ brew cleanup
 # For ddev
 mkcert -install
 
-# Create a projects directory
+# Create project directories
 mkdir -p $HOME/Code
 
-# Ask if user wants to clone your GitHub repositories with default answer as 'y'
-echo "Do you want to clone your GitHub repositories? (y/n) [default: y]"
-read -r clone_answer
-clone_answer=${clone_answer:-y}
-if [ "$clone_answer" = "y" ]; then
-  ./clone.sh
+# Clone personal GitHub repositories (skip in CI)
+if [ "$IS_CI" != "true" ]; then
+  echo "Do you want to clone your GitHub repositories? (y/n) [default: y]"
+  read -r clone_answer
+  clone_answer=${clone_answer:-y}
+  if [ "$clone_answer" = "y" ]; then
+    ./clone.sh
+  fi
 fi
 
 # Symlink the git configs to the home directory
 ln -sf $HOME/.dotfiles/git/.gitconfig $HOME/.gitconfig
 ln -sf $HOME/.dotfiles/git/.gitignore_global $HOME/.gitignore_global
 
-# Install latest node LTS
-mkdir -p ~/.nvm
+# Install latest Node LTS via nvm
+mkdir -p $HOME/.nvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
 nvm install --lts
@@ -69,5 +89,7 @@ $HOME/.composer/vendor/bin/phpcs -i
 composer global require ion-bazan/composer-diff
 composer diff --help
 
-# Set macOS preferences - we will run this last because this will reload the shell
-source ./macos/.macos
+# Set macOS preferences (skip in CI — headless runner, no system UI)
+if [ "$IS_CI" != "true" ]; then
+  source ./macos/.macos
+fi
