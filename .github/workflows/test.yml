@@ -1,0 +1,59 @@
+name: Test Dotfiles Setup
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-setup:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          path: ~/.dotfiles
+
+      - name: Run CI setup
+        run: |
+          cd ~/.dotfiles
+          chmod +x ./ci-setup.sh
+          ./ci-setup.sh
+
+      - name: Verify installations
+        run: |
+          echo "=== Essential Tools ==="
+          command -v zsh      && echo "✓ zsh"      || echo "✗ zsh"
+          command -v brew     && echo "✓ brew"     || echo "✗ brew"
+          command -v git      && echo "✓ git"      || echo "✗ git"
+          command -v node     && echo "✓ node"     || echo "✗ node"
+          command -v php      && echo "✓ php"      || echo "✗ php"
+          command -v composer && echo "✓ composer" || echo "✗ composer"
+          command -v ddev     && echo "✓ ddev"     || echo "✗ ddev"
+
+          echo "=== NVM ==="
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+          nvm --version && echo "✓ nvm" || echo "✗ nvm"
+
+          echo "=== Symlinks ==="
+          [ -L "$HOME/.zshrc" ]           && echo "✓ .zshrc"           || echo "✗ .zshrc"
+          [ -L "$HOME/.gitconfig" ]        && echo "✓ .gitconfig"        || echo "✗ .gitconfig"
+          [ -L "$HOME/.gitignore_global" ] && echo "✓ .gitignore_global" || echo "✗ .gitignore_global"
+
+          echo "=== Directories ==="
+          [ -d "$HOME/Code" ] && echo "✓ ~/Code" || echo "✗ ~/Code"
+          [ -d "$HOME/.nvm" ] && echo "✓ ~/.nvm"  || echo "✗ ~/.nvm"
+
+          echo "=== Versions ==="
+          node --version
+          npm --version
+          php --version
+          composer --version
+
+      - name: Test shell configuration
+        run: |
+          zsh -c 'echo "Shell configuration test passed"'
+          git config --list | head -5
