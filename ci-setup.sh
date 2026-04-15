@@ -28,8 +28,8 @@ ln -sf $HOME/.dotfiles/zsh/.zshrc $HOME/.zshrc
 # Update Homebrew recipes
 brew update
 
-# Install all dependencies with bundle (See Brewfile)
-brew bundle --file ./brew/Brewfile --no-quarantine
+# Install CLI tools only (GUI casks are not needed in CI)
+brew bundle --file ./brew/Brewfile.ci --no-quarantine
 
 # Clean up Homebrew
 brew cleanup

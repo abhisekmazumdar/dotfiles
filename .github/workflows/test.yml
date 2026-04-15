@@ -13,39 +13,42 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          path: ~/.dotfiles
+
+      - name: Link dotfiles to expected path
+        # actions/checkout@v4 requires path to be within GITHUB_WORKSPACE.
+        # ci-setup.sh expects dotfiles at $HOME/.dotfiles, so symlink them.
+        run: ln -sf "$GITHUB_WORKSPACE" "$HOME/.dotfiles"
 
       - name: Run CI setup
         run: |
-          cd ~/.dotfiles
+          cd "$HOME/.dotfiles"
           chmod +x ./ci-setup.sh
           ./ci-setup.sh
 
       - name: Verify installations
         run: |
           echo "=== Essential Tools ==="
-          command -v zsh      && echo "✓ zsh"      || echo "✗ zsh"
-          command -v brew     && echo "✓ brew"     || echo "✗ brew"
-          command -v git      && echo "✓ git"      || echo "✗ git"
-          command -v node     && echo "✓ node"     || echo "✗ node"
-          command -v php      && echo "✓ php"      || echo "✗ php"
-          command -v composer && echo "✓ composer" || echo "✗ composer"
-          command -v ddev     && echo "✓ ddev"     || echo "✗ ddev"
+          command -v zsh      && echo "zsh ok"      || echo "zsh MISSING"
+          command -v brew     && echo "brew ok"     || echo "brew MISSING"
+          command -v git      && echo "git ok"      || echo "git MISSING"
+          command -v node     && echo "node ok"     || echo "node MISSING"
+          command -v php      && echo "php ok"      || echo "php MISSING"
+          command -v composer && echo "composer ok" || echo "composer MISSING"
+          command -v ddev     && echo "ddev ok"     || echo "ddev MISSING"
 
           echo "=== NVM ==="
           export NVM_DIR="$HOME/.nvm"
           [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-          nvm --version && echo "✓ nvm" || echo "✗ nvm"
+          nvm --version && echo "nvm ok" || echo "nvm MISSING"
 
           echo "=== Symlinks ==="
-          [ -L "$HOME/.zshrc" ]           && echo "✓ .zshrc"           || echo "✗ .zshrc"
-          [ -L "$HOME/.gitconfig" ]        && echo "✓ .gitconfig"        || echo "✗ .gitconfig"
-          [ -L "$HOME/.gitignore_global" ] && echo "✓ .gitignore_global" || echo "✗ .gitignore_global"
+          [ -L "$HOME/.zshrc" ]           && echo ".zshrc ok"           || echo ".zshrc MISSING"
+          [ -L "$HOME/.gitconfig" ]        && echo ".gitconfig ok"        || echo ".gitconfig MISSING"
+          [ -L "$HOME/.gitignore_global" ] && echo ".gitignore_global ok" || echo ".gitignore_global MISSING"
 
           echo "=== Directories ==="
-          [ -d "$HOME/Code" ] && echo "✓ ~/Code" || echo "✗ ~/Code"
-          [ -d "$HOME/.nvm" ] && echo "✓ ~/.nvm"  || echo "✗ ~/.nvm"
+          [ -d "$HOME/Code" ] && echo "~/Code ok" || echo "~/Code MISSING"
+          [ -d "$HOME/.nvm" ] && echo "~/.nvm ok"  || echo "~/.nvm MISSING"
 
           echo "=== Versions ==="
           node --version
