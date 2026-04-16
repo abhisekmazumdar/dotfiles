@@ -6,16 +6,26 @@ This repository contains my personal dotfiles for setting up a new macOS machine
 
 * **Shell & Package Management**
   - [Oh My Zsh](https://ohmyz.sh/) for enhanced shell experience
-  - [Homebrew](https://brew.sh/) for package management
-  - [Homebrew Bundle](https://github.com/Homebrew/homebrew-bundle) for managing all applications and binaries
+  - [Homebrew](https://brew.sh/) for package management with Brewfile for all apps and binaries
+  - [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) for shell suggestions
 
 * **Development Environment**
-  - Latest Node.js LTS version via nvm
+  - Latest Node.js LTS version via [nvm](https://github.com/nvm-sh/nvm)
   - PHP development tools:
     - `phpcs` & `phpcbf` configured for Drupal coding standards
     - `composer-diff` for comparing Composer dependencies
   - DDEV development environment setup with mkcert
-  - Git configuration with global settings
+  - Git configuration with global settings and gitignore
+  - [Neovim](https://neovim.io/) as terminal editor
+  - [Lazygit](https://github.com/jesseduffield/lazygit) for terminal git UI
+  - [pnpm](https://pnpm.io/) for fast Node.js package management
+
+* **Apps & Tools**
+  - [Ghostty](https://ghostty.org/) terminal
+  - [Bruno](https://www.usebruno.com/) API client
+  - [Claude Code](https://claude.ai/code) AI CLI
+  - [DDEV](https://ddev.com/) local development environment
+  - [Ollama](https://ollama.ai/) for running local LLMs
 
 * **System Configuration**
   - Custom macOS defaults for optimal development experience
@@ -32,7 +42,7 @@ This repository contains my personal dotfiles for setting up a new macOS machine
    ```shell
    # Clone the repository
    git clone --recursive git@github.com:abhisekmazumdar/dotfiles.git ~/.dotfiles
-   
+
    # Run the installation script
    cd ~/.dotfiles && ./fresh.sh
    ```
@@ -47,10 +57,10 @@ The installation script will:
 
 ## Directory Structure
 
-- `brew/` - Homebrew bundle configuration
-- `git/` - Git configuration files
+- `brew/` - Homebrew bundle configuration (Brewfile)
+- `git/` - Git configuration files (`.gitconfig`, `.gitignore_global`)
 - `macos/` - macOS system preferences
-- `zsh/` - Zsh configuration files
+- `zsh/` - Zsh configuration files (`.zshrc`, `aliases.zsh`, `path.zsh`)
 - `fresh.sh` - Main installation script
 - `clone.sh` - Repository cloning script
 
