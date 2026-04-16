@@ -1,0 +1,65 @@
+name: Test Dotfiles Setup
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  HOMEBREW_NO_AUTO_UPDATE: "1"
+  HOMEBREW_NO_INSTALL_CLEANUP: "1"
+
+jobs:
+  test-setup:
+    runs-on: macos-latest   # Apple Silicon (ARM64)
+    name: Test on macOS (Apple Silicon)
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Link dotfiles to expected path
+        # fresh.sh expects dotfiles at $HOME/.dotfiles — symlink the workspace there.
+        run: ln -sf "$GITHUB_WORKSPACE" "$HOME/.dotfiles"
+
+      - name: Skip GUI casks in CI
+        # Build HOMEBREW_BUNDLE_CASK_SKIP from the real Brewfile so fresh.sh
+        # runs brew bundle against the actual file but skips desktop apps.
+        run: |
+          SKIP=$(grep '^cask ' brew/Brewfile | sed "s/cask '//;s/'$//" | tr '\n' ' ')
+          echo "HOMEBREW_BUNDLE_CASK_SKIP=$SKIP" >> $GITHUB_ENV
+
+      - name: Run fresh.sh
+        # CI=true is set automatically by GitHub Actions — fresh.sh uses it to
+        # skip interactive prompts, source ~/.zshrc, and macOS preferences.
+        run: |
+          cd "$HOME/.dotfiles"
+          chmod +x ./fresh.sh
+          ./fresh.sh
+
+      - name: Verify setup
+        run: |
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+
+          echo "=== Tools ==="
+          command -v brew     && echo "brew ok"     || true
+          command -v git      && echo "git ok"      || true
+          command -v node     && echo "node ok"     || true
+          command -v php      && echo "php ok"      || true
+          command -v composer && echo "composer ok" || true
+          command -v ddev     && echo "ddev ok"     || true
+          nvm --version       && echo "nvm ok"      || true
+
+          echo "=== Symlinks ==="
+          [ -L "$HOME/.zshrc" ]           && echo ".zshrc ok"     || echo ".zshrc MISSING"
+          [ -L "$HOME/.gitconfig" ]        && echo ".gitconfig ok" || echo ".gitconfig MISSING"
+          [ -L "$HOME/.gitignore_global" ] && echo ".gitignore ok" || echo ".gitignore MISSING"
+
+          echo "=== Versions ==="
+          node --version
+          npm --version
+          php --version | head -1
+          composer --version
