@@ -1,5 +1,7 @@
 [user]
 	name = Abhisek Mazumdar
 	email = abhisek.mazumdar@dropsolid.com
+[core]
+	excludesfile = ~/.gitignore_global
 [init]
 	defaultBranch = main

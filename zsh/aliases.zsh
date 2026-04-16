@@ -10,9 +10,6 @@ alias ohmyzsh="cursor ~/.oh-my-zsh"
 # Shortcuts
 alias copyssh="pbcopy < $HOME/.ssh/id_rsa.pub"
 alias reloaddns="dscacheutil -flushcache && sudo killall -HUP mDNSResponder"
-alias phpstorm='open -a /Applications/PhpStorm.app "`pwd`"'
-# ente is been used by Raycast so do not remove it.
-alias ente='~/ente'
 
 # Directories
 alias dotfiles="cd $DOTFILES"
@@ -20,8 +17,3 @@ alias library="cd $HOME/Library"
 alias open-codes="cd $HOME/Code"
 alias open-mautic="cd $HOME/Code/mautic-projects"
 alias open-drupal="cd $HOME/Code/drupal-projects"
-
-
-# For Drupal
-alias phpcs=$HOME/.composer/vendor/bin/phpcs
-alias phpcbf=$HOME/.composer/vendor/bin/phpcbf

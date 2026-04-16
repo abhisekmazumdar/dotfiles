@@ -16,16 +16,13 @@ if test ! $(which brew); then
 fi
 
 # Removes .zshrc from $HOME (if it exists) and symlinks the .zshrc file from the .dotfiles
-rm -rf $HOME/.zshrc
-ln -sw $HOME/.dotfiles/zsh/.zshrc $HOME/.zshrc
-
-source ~/.zshrc
+rm -f $HOME/.zshrc
+ln -sf $HOME/.dotfiles/zsh/.zshrc $HOME/.zshrc
 
 # Update Homebrew recipes
 brew update
 
 # Install all our dependencies with bundle (See Brewfile)
-brew tap homebrew/bundle
 brew bundle --file ./brew/Brewfile
 
 # Clean up for Homebrew.
@@ -34,8 +31,8 @@ brew cleanup
 # For ddev
 mkcert -install
 
-# Create a projects directories
-mkdir $HOME/Code
+# Create a projects directory
+mkdir -p $HOME/Code
 
 # Ask if user wants to clone your GitHub repositories with default answer as 'y'
 echo "Do you want to clone your GitHub repositories? (y/n) [default: y]"
@@ -46,11 +43,13 @@ if [ "$clone_answer" = "y" ]; then
 fi
 
 # Symlink the git configs to the home directory
-ln -sw $HOME/.dotfiles/git/.gitconfig $HOME/.gitconfig
-ln -sw $HOME/.dotfiles/git/.gitignore_global $HOME/.gitignore_global
+ln -sf $HOME/.dotfiles/git/.gitconfig $HOME/.gitconfig
+ln -sf $HOME/.dotfiles/git/.gitignore_global $HOME/.gitignore_global
 
 # Install latest node LTS
-mkdir ~/.nvm
+mkdir -p ~/.nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
 nvm install --lts
 
 # Setup phpcs & phpcbf
