@@ -100,10 +100,3 @@ export NVM_DIR="$HOME/.nvm"
   [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" 
 
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-# Dropsolid AI secrets sourcing
-[ -f "$HOME/.config/opencode/secrets.env" ] && set -a && . "$HOME/.config/opencode/secrets.env" && set +a
-export PATH="$HOME/.local/bin:$PATH"
-
-# For Drupal Gitlab access Read only API
-# export GITLAB_TOKEN="" # Set this in ~/.config/opencode/secrets.env or similar
