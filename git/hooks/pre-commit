@@ -1,0 +1,12 @@
+#!/bin/sh
+# Blocks a commit if gitleaks finds a secret in the staged changes.
+# Activated by `git config core.hooksPath git/hooks` (done by fresh.sh).
+# Mirrors the gitleaks-action step in .github/workflows/test.yml, but runs
+# before a commit even happens instead of after a push.
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "pre-commit: gitleaks not installed, skipping secret scan (brew install gitleaks)"
+  exit 0
+fi
+
+gitleaks protect --staged --verbose --redact

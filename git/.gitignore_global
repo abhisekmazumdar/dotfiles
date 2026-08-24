@@ -38,3 +38,18 @@ Thumbs.db
 .idea/
 .vscode
 .vagrant/
+
+# Claude related
+**/.claude/settings.local.json
+
+# Secrets & credentials #
+##########################
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+*.ovpn

@@ -74,6 +74,10 @@ fi
 ln -sf $HOME/.dotfiles/git/.gitconfig $HOME/.gitconfig
 ln -sf $HOME/.dotfiles/git/.gitignore_global $HOME/.gitignore_global
 
+# Point this repo's own git hooks (git/hooks/pre-commit) at gitleaks, so a
+# leaked secret is caught before it's committed, not just before it's pushed.
+git -C $HOME/.dotfiles config core.hooksPath git/hooks
+
 # Install latest Node LTS via nvm
 mkdir -p $HOME/.nvm
 export NVM_DIR="$HOME/.nvm"
