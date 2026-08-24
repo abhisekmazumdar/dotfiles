@@ -47,6 +47,17 @@ fi
 # Update Homebrew recipes
 brew update
 
+# Recent Homebrew versions refuse to load formulae from third-party taps
+# until the tap is explicitly trusted (brew trust). Trust the taps used by
+# our Brewfile up front so `brew bundle` below doesn't abort on them.
+# `brew trust` doesn't exist on older Homebrew versions, so no-op if missing.
+if brew trust --help >/dev/null 2>&1; then
+  for tap in ddev/ddev pantheon-systems/external steipete/tap; do
+    brew tap "$tap" >/dev/null 2>&1 || true
+    brew trust --tap "$tap" || true
+  done
+fi
+
 # Install all our dependencies with bundle (See Brewfile)
 # In CI, the workflow sets HOMEBREW_BUNDLE_CASK_SKIP so GUI casks are skipped.
 brew bundle --file ./brew/Brewfile
