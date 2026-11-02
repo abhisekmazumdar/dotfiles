@@ -9,7 +9,6 @@ brew 'fastfetch'
 brew 'gh'
 brew 'git'
 brew 'git-lfs'
-brew 'gitlab-ci-local'
 brew 'gitleaks' # Used by git/hooks/pre-commit
 brew 'glab'
 brew 'gnupg'

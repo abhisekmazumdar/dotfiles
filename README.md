@@ -27,7 +27,7 @@ This repository contains my personal dotfiles for setting up a new macOS machine
   - [Rancher Desktop](https://rancherdesktop.io/) for Docker / containers
   - [Claude Code](https://claude.ai/code) AI CLI
   - [DDEV](https://ddev.com/) local development environment
-  - [GitLab CLI](https://gitlab.com/gitlab-org/cli) (`glab`) and [gitlab-ci-local](https://github.com/firecow/gitlab-ci-local)
+  - [GitLab CLI](https://gitlab.com/gitlab-org/cli) (`glab`)
 
 * **System Configuration**
   - Custom macOS defaults for optimal development experience
