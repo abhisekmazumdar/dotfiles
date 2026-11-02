@@ -14,6 +14,6 @@ add_to_path "$HOME/.composer/vendor/bin"
 # Load global Node installed binaries
 add_to_path "$HOME/.node/bin"
 
-# Use project specific binaries before global ones
-add_to_path "vendor/bin"
-add_to_path "node_modules/.bin"
+# Project binaries (vendor/bin, node_modules/.bin) are deliberately not on PATH:
+# relative entries would let any cloned repo shadow commands like `git`.
+# Use `composer exec`, `npx`/`pnpm exec`, or `ddev` instead.
