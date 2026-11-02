@@ -1,13 +1,18 @@
 # Binaries
 brew 'bash' # Latest Bash version
+brew 'bats-core' # Bash Automated Testing System
 brew 'composer'
 brew 'coreutils' # Those that come with macOS are outdated
 brew 'ddev/ddev/ddev'
+brew 'duti' # Set default apps for file types / URL schemes
 brew 'fastfetch'
 brew 'gh'
 brew 'git'
 brew 'git-lfs'
-brew 'gitleaks'
+brew 'gitlab-ci-local'
+brew 'gitleaks' # Used by git/hooks/pre-commit
+brew 'glab'
+brew 'gnupg'
 brew 'go'
 brew 'grep'
 brew 'has'
@@ -16,31 +21,34 @@ brew 'mkcert'
 brew 'neovim'
 brew 'nss'
 brew 'nvm'
-brew 'ollama'
-brew 'pantheon-systems/external/terminus'
 brew 'php'
 brew 'pipx'
 brew 'pkgconf' # https://github.com/driesvints/dotfiles/issues/20
 brew 'pnpm'
-brew 'trash'
+brew 'python@3.14'
+brew 'python@3.15'
+brew 'sshpass'
+brew 'trash', link: true
 brew 'zsh-autosuggestions'
 
 # Apps
 cask 'appcleaner'
-cask 'bruno'
+cask 'chatgpt'
+cask 'claude'
 cask 'claude-code'
 cask 'discord'
 cask 'firefox'
 cask 'gcloud-cli'
 cask 'ghostty'
+cask 'glaze-app'
 cask 'google-chrome'
-cask 'hiddenbar'
 cask 'logi-options+'
 cask 'monitorcontrol'
 cask 'ngrok'
 cask 'notion'
 cask 'notion-calendar'
 cask 'phpstorm'
+cask 'rancher'
 cask 'raycast'
 cask 'sequel-ace'
 cask 'slack'
@@ -48,6 +56,7 @@ cask 'sublime-text'
 cask 'visual-studio-code'
 cask 'vlc'
 cask 'warp'
+cask 'zen'
 cask 'zoom'
 
 # Fonts

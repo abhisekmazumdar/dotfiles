@@ -24,10 +24,10 @@ This repository contains my personal dotfiles for setting up a new macOS machine
 
 * **Apps & Tools**
   - [Ghostty](https://ghostty.org/) terminal
-  - [Bruno](https://www.usebruno.com/) API client
+  - [Rancher Desktop](https://rancherdesktop.io/) for Docker / containers
   - [Claude Code](https://claude.ai/code) AI CLI
   - [DDEV](https://ddev.com/) local development environment
-  - [Ollama](https://ollama.ai/) for running local LLMs
+  - [GitLab CLI](https://gitlab.com/gitlab-org/cli) (`glab`) and [gitlab-ci-local](https://github.com/firecow/gitlab-ci-local)
 
 * **System Configuration**
   - Custom macOS defaults for optimal development experience
@@ -72,7 +72,7 @@ The CI pipeline runs on every push and pull request against a fresh **macOS (App
 
 | What CI skips | Why |
 |---|---|
-| GUI cask apps (Arc, PhpStorm, Slack…) | No display server on headless runners |
+| GUI cask apps (PhpStorm, Slack…) | No display server on headless runners |
 | macOS system preferences (`.macos`) | No need to set hostname/Dock/Finder on a runner |
 | Interactive clone prompt | No user to answer `y/n` |
 | `source ~/.zshrc` | Runner uses bash; sourcing a zsh config would fail |

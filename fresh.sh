@@ -52,7 +52,7 @@ brew update
 # our Brewfile up front so `brew bundle` below doesn't abort on them.
 # `brew trust` doesn't exist on older Homebrew versions, so no-op if missing.
 if brew trust --help >/dev/null 2>&1; then
-  for tap in ddev/ddev pantheon-systems/external steipete/tap; do
+  for tap in ddev/ddev; do
     brew tap "$tap" >/dev/null 2>&1 || true
     brew trust --tap "$tap" || true
   done
@@ -94,6 +94,9 @@ mkdir -p $HOME/.nvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
 nvm install --lts
+
+# Global npm CLIs (corepack is no longer bundled with recent Node releases)
+npm install -g @googleworkspace/cli @playwright/cli ccstatusline corepack
 
 # Setup phpcs & phpcbf
 composer global require drupal/coder

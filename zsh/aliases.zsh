@@ -4,8 +4,8 @@
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-alias zshconfig="cursor ~/.zshrc"
-alias ohmyzsh="cursor ~/.oh-my-zsh"
+alias zshconfig="code ~/.zshrc"
+alias ohmyzsh="code ~/.oh-my-zsh"
 
 # Shortcuts
 alias copyssh="pbcopy < $HOME/.ssh/id_rsa.pub"
